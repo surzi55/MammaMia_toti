@@ -1,17 +1,21 @@
+#Use an official Python runtime as a parent image
 FROM python:3.11-slim-bullseye
+
+# Set the working directory in the container to /app
 WORKDIR /app
 
-ADD . /app
+# Install git
+RUN apt-get update && apt-get install -y git
 
-RUN apt-get update && \
-    apt-get install -y tesseract-ocr libtesseract-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Clone the repository
+RUN git clone https://github.com/surzi55/MammaMia_toti.git .
 
+
+# Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir pytesseract
 
+# Expose the port, for now default is 8080 cause it's the only one really allowed by HuggingFace
 EXPOSE 8080
 
 # Run run.py when the container launches
-ENTRYPOINT ["python","run.py"]
+ENTRYPOINT ["python", "run.py"]
